@@ -1,0 +1,266 @@
+Lua Grammar with no common prefixes or left recurion:
+args ::= 
+	'(' argsOption ')' |
+	tableconstructor |
+	String 
+argsOption ::= 
+	\NULL |
+	explist 
+binop ::= 
+	'+' |
+	'-' |
+	'*' |
+	'/' |
+	'^' |
+	'%' |
+	'..' |
+	'<' |
+	'<=' |
+	'>' |
+	'>=' |
+	'==' |
+	'~=' |
+	'and' |
+	'or' 
+block ::= 
+	blockMany blockOption 
+blockMany ::= 
+	\NULL |
+	stat blockMany 
+blockOption ::= 
+	\NULL |
+	retstat 
+exp ::= 
+	'nil' expTail |
+	'false' expTail |
+	'true' expTail |
+	Number expTail |
+	String expTail |
+	'...' expTail |
+	functiondef expTail |
+	prefixexp expTail |
+	tableconstructor expTail |
+	unop exp expTail 
+expTail ::= 
+	\NULL |
+	'+' exp expTail |
+	'-' exp expTail |
+	'*' exp expTail |
+	'/' exp expTail |
+	'^' exp expTail |
+	'%' exp expTail |
+	'..' exp expTail |
+	'<' exp expTail |
+	'<=' exp expTail |
+	'>' exp expTail |
+	'>=' exp expTail |
+	'==' exp expTail |
+	'~=' exp expTail |
+	'and' exp expTail |
+	'or' exp expTail 
+explist ::= 
+	'nil' expTail explistMany |
+	'false' expTail explistMany |
+	'true' expTail explistMany |
+	Number expTail explistMany |
+	String expTail explistMany |
+	'...' expTail explistMany |
+	functiondef expTail explistMany |
+	prefixexp expTail explistMany |
+	tableconstructor expTail explistMany |
+	unop exp expTail explistMany 
+explistMany ::= 
+	\NULL |
+	',' exp explistMany 
+field ::= 
+	'[' exp ']' '=' exp |
+	Name '=' exp |
+	'nil' expTail |
+	'false' expTail |
+	'true' expTail |
+	Number expTail |
+	String expTail |
+	'...' expTail |
+	functiondef expTail |
+	prefixexp expTail |
+	tableconstructor expTail |
+	unop exp expTail 
+fieldlist ::= 
+	'[' exp ']' '=' exp fieldlistMany fieldlistOption |
+	Name '=' exp fieldlistMany fieldlistOption |
+	'nil' expTail fieldlistMany fieldlistOption |
+	'false' expTail fieldlistMany fieldlistOption |
+	'true' expTail fieldlistMany fieldlistOption |
+	Number expTail fieldlistMany fieldlistOption |
+	String expTail fieldlistMany fieldlistOption |
+	'...' expTail fieldlistMany fieldlistOption |
+	functiondef expTail fieldlistMany fieldlistOption |
+	prefixexp expTail fieldlistMany fieldlistOption |
+	tableconstructor expTail fieldlistMany fieldlistOption |
+	unop exp expTail fieldlistMany fieldlistOption 
+fieldlistMany ::= 
+	\NULL |
+	fieldsep field fieldlistMany 
+fieldlistOption ::= 
+	\NULL |
+	fieldsep 
+fieldsep ::= 
+	',' |
+	';' 
+funcbody ::= 
+	'(' funcbodyOption ')' block 'end' 
+funcbodyOption ::= 
+	\NULL |
+	parlist 
+funcname ::= 
+	Name funcnameMany funcnameOption 
+funcnameMany ::= 
+	\NULL |
+	'.' Name funcnameMany 
+funcnameOption ::= 
+	\NULL |
+	':' Name 
+functioncall ::= 
+	prefixexp functioncallPTail 
+functioncallPTail ::= 
+	args |
+	':' Name args 
+functiondef ::= 
+	'function' funcbody 
+label ::= 
+	'::' Name '::' 
+namelist ::= 
+	Name namelistMany 
+namelistMany ::= 
+	\NULL |
+	',' Name namelistMany 
+parlist ::= 
+	'...' |
+	Name namelistMany parlistOption 
+parlistOption ::= 
+	\NULL |
+	',' '...' 
+prefixexp ::= 
+	var prefixexpTail |
+	'(' exp ')' prefixexpTail 
+prefixexpTail ::= 
+	\NULL |
+	':' Name args prefixexpTail |
+	'(' argsOption ')' prefixexpTail |
+	tableconstructor prefixexpTail |
+	String prefixexpTail 
+retstat ::= 
+	'return' retstatOption' retstatOption 
+retstatOption ::= 
+	\NULL |
+	';' 
+retstatOption' ::= 
+	\NULL |
+	'nil' expTail explistMany |
+	'false' expTail explistMany |
+	'true' expTail explistMany |
+	Number expTail explistMany |
+	String expTail explistMany |
+	'...' expTail explistMany |
+	tableconstructor expTail explistMany |
+	unop exp expTail explistMany |
+	'function' funcbody expTail explistMany |
+	var prefixexpTail expTail explistMany |
+	'(' exp ')' prefixexpTail expTail explistMany 
+stat ::= 
+	'for' statPTail''' |
+	'local' statPTail'' |
+	var prefixexpTail statPTail' |
+	'(' exp ')' prefixexpTail statPTail |
+	'::' Name '::' |
+	'function' funcname funcbody |
+	'if' exp 'then' block statMany statOption'' 'end' |
+	'repeat' block 'until' exp |
+	'while' exp 'do' block 'end' |
+	'do' block 'end' |
+	'goto' Name |
+	'break' |
+	varlist '=' explist |
+	';' 
+statMany ::= 
+	\NULL |
+	'elseif' exp 'then' block statMany 
+statOption ::= 
+	\NULL |
+	'=' explist 
+statOption' ::= 
+	\NULL |
+	',' exp 
+statOption'' ::= 
+	\NULL |
+	'else' block 
+statPTail ::= 
+	args |
+	':' Name args 
+statPTail' ::= 
+	args |
+	':' Name args 
+statPTail'' ::= 
+	'function' Name funcbody |
+	namelist statOption 
+statPTail''' ::= 
+	Name '=' exp ',' exp statOption' 'do' block 'end' |
+	namelist 'in' explist 'do' block 'end' 
+tableconstructor ::= 
+	'{' tableconstructorOption '}' 
+tableconstructorOption ::= 
+	\NULL |
+	'[' exp ']' '=' exp fieldlistMany fieldlistOption |
+	Name '=' exp fieldlistMany fieldlistOption |
+	'nil' expTail fieldlistMany fieldlistOption |
+	'false' expTail fieldlistMany fieldlistOption |
+	'true' expTail fieldlistMany fieldlistOption |
+	Number expTail fieldlistMany fieldlistOption |
+	String expTail fieldlistMany fieldlistOption |
+	'...' expTail fieldlistMany fieldlistOption |
+	unop exp expTail fieldlistMany fieldlistOption |
+	'function' funcbody expTail fieldlistMany fieldlistOption |
+	var prefixexpTail expTail fieldlistMany fieldlistOption |
+	'(' exp ')' prefixexpTail expTail fieldlistMany fieldlistOption |
+	'{' tableconstructorOption '}' expTail fieldlistMany fieldlistOption 
+unop ::= 
+	'-' |
+	'not' |
+	'#' 
+var ::= 
+	'(' exp ')' prefixexpTail varPTail |
+	Name varTail 
+varPTail ::= 
+	'[' exp ']' varTail |
+	'.' Name varTail 
+varTail ::= 
+	':' Name args prefixexpTail varTailPTail''' |
+	'(' argsOption ')' prefixexpTail varTailPTail'' |
+	String prefixexpTail varTailPTail' |
+	'{' tableconstructorOption '}' prefixexpTail varTailPTail |
+	'.' Name varTail |
+	'[' exp ']' varTail |
+	\NULL 
+varTailPTail ::= 
+	'[' exp ']' varTail |
+	'.' Name varTail 
+varTailPTail' ::= 
+	'[' exp ']' varTail |
+	'.' Name varTail 
+varTailPTail'' ::= 
+	'[' exp ']' varTail |
+	'.' Name varTail 
+varTailPTail''' ::= 
+	'[' exp ']' varTail |
+	'.' Name varTail 
+varlist ::= 
+	'(' exp ')' prefixexpTail varlistPTail |
+	Name varTail varlistMany 
+varlistMany ::= 
+	\NULL |
+	',' var varlistMany 
+varlistPTail ::= 
+	'[' exp ']' varTail varlistMany |
+	'.' Name varTail varlistMany 
+
+

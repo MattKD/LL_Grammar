@@ -1,0 +1,155 @@
+Lua Grammar as CFG:
+args ::= 
+	'(' argsOption ')' |
+	tableconstructor |
+	String 
+argsOption ::= 
+	\NULL |
+	explist 
+binop ::= 
+	'+' |
+	'-' |
+	'*' |
+	'/' |
+	'^' |
+	'%' |
+	'..' |
+	'<' |
+	'<=' |
+	'>' |
+	'>=' |
+	'==' |
+	'~=' |
+	'and' |
+	'or' 
+block ::= 
+	blockMany blockOption 
+blockMany ::= 
+	\NULL |
+	stat blockMany 
+blockOption ::= 
+	\NULL |
+	retstat 
+exp ::= 
+	'nil' |
+	'false' |
+	'true' |
+	Number |
+	String |
+	'...' |
+	functiondef |
+	prefixexp |
+	tableconstructor |
+	exp binop exp |
+	unop exp 
+explist ::= 
+	exp explistMany 
+explistMany ::= 
+	\NULL |
+	',' exp explistMany 
+field ::= 
+	'[' exp ']' '=' exp |
+	Name '=' exp |
+	exp 
+fieldlist ::= 
+	field fieldlistMany fieldlistOption 
+fieldlistMany ::= 
+	\NULL |
+	fieldsep field fieldlistMany 
+fieldlistOption ::= 
+	\NULL |
+	fieldsep 
+fieldsep ::= 
+	',' |
+	';' 
+funcbody ::= 
+	'(' funcbodyOption ')' block 'end' 
+funcbodyOption ::= 
+	\NULL |
+	parlist 
+funcname ::= 
+	Name funcnameMany funcnameOption 
+funcnameMany ::= 
+	\NULL |
+	'.' Name funcnameMany 
+funcnameOption ::= 
+	\NULL |
+	':' Name 
+functioncall ::= 
+	prefixexp args |
+	prefixexp ':' Name args 
+functiondef ::= 
+	'function' funcbody 
+label ::= 
+	'::' Name '::' 
+namelist ::= 
+	Name namelistMany 
+namelistMany ::= 
+	\NULL |
+	',' Name namelistMany 
+parlist ::= 
+	namelist parlistOption |
+	'...' 
+parlistOption ::= 
+	\NULL |
+	',' '...' 
+prefixexp ::= 
+	var |
+	functioncall |
+	'(' exp ')' 
+retstat ::= 
+	'return' retstatOption' retstatOption 
+retstatOption ::= 
+	\NULL |
+	';' 
+retstatOption' ::= 
+	\NULL |
+	explist 
+stat ::= 
+	';' |
+	varlist '=' explist |
+	functioncall |
+	label |
+	'break' |
+	'goto' Name |
+	'do' block 'end' |
+	'while' exp 'do' block 'end' |
+	'repeat' block 'until' exp |
+	'if' exp 'then' block statMany statOption'' 'end' |
+	'for' Name '=' exp ',' exp statOption' 'do' block 'end' |
+	'for' namelist 'in' explist 'do' block 'end' |
+	'function' funcname funcbody |
+	'local' 'function' Name funcbody |
+	'local' namelist statOption 
+statMany ::= 
+	\NULL |
+	'elseif' exp 'then' block statMany 
+statOption ::= 
+	\NULL |
+	'=' explist 
+statOption' ::= 
+	\NULL |
+	',' exp 
+statOption'' ::= 
+	\NULL |
+	'else' block 
+tableconstructor ::= 
+	'{' tableconstructorOption '}' 
+tableconstructorOption ::= 
+	\NULL |
+	fieldlist 
+unop ::= 
+	'-' |
+	'not' |
+	'#' 
+var ::= 
+	Name |
+	prefixexp '[' exp ']' |
+	prefixexp '.' Name 
+varlist ::= 
+	var varlistMany 
+varlistMany ::= 
+	\NULL |
+	',' var varlistMany 
+
+
